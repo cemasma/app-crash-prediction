@@ -94,7 +94,7 @@ with open('data.jsonl') as f:
             log_arr.append(0)
 
         
-        if log_arr[3] is not 0:
+        if log_arr[4] is not 0:
             print(log_arr)
             logs_arr.append(log_arr)
             rowcount += 1
