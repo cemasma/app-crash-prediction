@@ -101,66 +101,139 @@ with open('data.jsonl') as f:
 
 
 print(len(logs_arr))
+
+
+
+
 ratio = 0.0
 timeout_count = 0
+success_response_count = 0
 connection_closed_count = 0
 memory_quota_exceeded_count = 0
 error_count = 0
+
 for i in range(len(logs_arr)):
     tempLog = logs_arr[i]
-    if tempLog[3] == 1: # app crashed
+    if tempLog[3] == 0: # 😎
+        success_response_count += 1
+        if success_response_count > 20:
+            timeout_count = 0
+            connection_closed_count = 0
+            memory_quota_exceeded_count = 0
+            error_count = 0
+        elif success_response_count > 10:
+            ratio = 0.0
+            if timeout_count > 2:
+                timeout_count -= 3
+            if connection_closed_count > 2:
+                connection_closed_count -= 3
+            if memory_quota_exceeded_count > 2:
+                memory_quota_exceeded_count -= 3
+            if error_count > 3:
+                error_count -= 3
+        elif success_response_count > 5:
+            ratio /= 2
+            if timeout_count > 1:
+                timeout_count -= 2
+            if connection_closed_count > 1:
+                connection_closed_count -= 2
+            if memory_quota_exceeded_count > 1:
+                memory_quota_exceeded_count -= 2
+            if error_count > 1:
+                error_count -= 2
+        else:
+            if timeout_count > 0:
+                timeout_count -= 1
+            if connection_closed_count > 0:
+                connection_closed_count -= 1
+            if memory_quota_exceeded_count > 0:
+                memory_quota_exceeded_count -= 1
+            if error_count > 0:
+                error_count -= 1
+            if ratio > 0:
+                ratio -= 0.1
+        prediction_arr.append(ratio)
+    elif tempLog[3] == 1: # app crashed :( ⚰️
         timeout_count = 0
         connection_closed_count = 0
+        success_response_count = 0
+        memory_quota_exceeded_count = 0
+        error_count = 0
         ratio = 0.0
         #print(1)
         prediction_arr.append(1.0)
     else:
-        if tempLog[3] == 2: # request timeout
+        if tempLog[3] == 2: # request timeout :| 🥴
             timeout_count +=1
             if timeout_count > 10: 
                 ratio = ratio + 1.0
+                success_response_count = 0
             elif timeout_count > 7: 
                 ratio = ratio + 0.8
+                success_response_count = 0
             elif  timeout_count > 5:
+                success_response_count = 0
                 ratio = ratio + 0.5
             elif  timeout_count > 3:
                 ratio = ratio + 0.3
+                if success_response_count > 2:
+                    success_response_count -= 3
             elif  timeout_count > 1:
                 ratio = ratio + 0.1
-        elif tempLog[3] == 3: # connection close without response
+                if success_response_count > 0:
+                    success_response_count -= 1
+        elif tempLog[3] == 3: # connection close without response 🤯
             connection_closed_count +=1
             if connection_closed_count > 10: 
                 ratio = ratio + 1.0
+                success_response_count = 0
             elif connection_closed_count > 7: 
                 ratio = ratio + 0.9
+                success_response_count = 0
             elif  connection_closed_count > 5:
                 ratio = ratio + 0.7
+                success_response_count = 0
             elif  connection_closed_count > 3:
                 ratio = ratio + 0.4
+                success_response_count = 0
             elif  connection_closed_count >= 1:
                 ratio = ratio + 0.1
-        elif tempLog[3] == 4 or tempLog[3] == 5: # memory quota exceeded
+                if success_response_count > 1:
+                    success_response_count -= 2
+                elif success_response_count == 1:
+                    success_response_count = 0
+        elif tempLog[3] == 4 or tempLog[3] == 5: # memory quota exceeded 🤮
             memory_quota_exceeded_count +=1
             if memory_quota_exceeded_count > 8: 
                 ratio = ratio + 1.0
+                success_response_count = 0
             elif  memory_quota_exceeded_count > 5:
                 ratio = ratio + 0.8
+                success_response_count = 0
             elif  memory_quota_exceeded_count > 3:
                 ratio = ratio + 0.5
+                success_response_count = 0
             elif  memory_quota_exceeded_count >= 1:
                 ratio = ratio + 0.2
+                if success_response_count > 0:
+                    success_response_count -= 1
         else:
-            if tempLog[0] == 3:
+            if tempLog[0] == 3: #😡
                 error_count += 1
                 if error_count > 20:
                     ratio = ratio + 0.7
+                    success_response_count = 0
                 elif error_count > 10:
                     ratio = ratio + 0.4
+                    if success_response_count > 2:
+                        success_response_count -= 3
                 elif  error_count > 5:
                     ratio = ratio + 0.1
-        #print(ratio)
+                    if success_response_count > 0:
+                        success_response_count -= 1
         prediction_arr.append(ratio)
-print('len arr',len(prediction_arr))
+    #print(prediction_arr[i])
+print('prediction_arr length ',len(prediction_arr))
 
 '''
 
