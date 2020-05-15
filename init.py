@@ -36,7 +36,7 @@ def millis(start_time):
           dt.seconds) * 1000 + dt.microseconds / 1000.0
     return ms
 
-
+# 0 level_dict,  1 timestamp, 2 method_dict, 3 code_dict, 4 log_status, 5 log_service, 6 diff
 with open('data.jsonl') as f:
     for line in f:
         output = json.loads(line)
@@ -93,16 +93,79 @@ with open('data.jsonl') as f:
         else:
             log_arr.append(0)
 
-        
         if log_arr[4] is not 0:
-            print(log_arr)
+            #print(log_arr)
             logs_arr.append(log_arr)
             rowcount += 1
         zamanlar.append(timestamp)
 
 
 print(len(logs_arr))
+ratio = 0.0
+timeout_count = 0
+connection_closed_count = 0
+memory_quota_exceeded_count = 0
+error_count = 0
+for i in range(len(logs_arr)):
+    tempLog = logs_arr[i]
+    if tempLog[3] == 1: # app crashed
+        timeout_count = 0
+        connection_closed_count = 0
+        ratio = 0.0
+        #print(1)
+        prediction_arr.append(1.0)
+    else:
+        if tempLog[3] == 2: # request timeout
+            timeout_count +=1
+            if timeout_count > 10: 
+                ratio = ratio + 1.0
+            elif timeout_count > 7: 
+                ratio = ratio + 0.8
+            elif  timeout_count > 5:
+                ratio = ratio + 0.5
+            elif  timeout_count > 3:
+                ratio = ratio + 0.3
+            elif  timeout_count > 1:
+                ratio = ratio + 0.1
+        elif tempLog[3] == 3: # connection close without response
+            connection_closed_count +=1
+            if connection_closed_count > 10: 
+                ratio = ratio + 1.0
+            elif connection_closed_count > 7: 
+                ratio = ratio + 0.9
+            elif  connection_closed_count > 5:
+                ratio = ratio + 0.7
+            elif  connection_closed_count > 3:
+                ratio = ratio + 0.4
+            elif  connection_closed_count >= 1:
+                ratio = ratio + 0.1
+        elif tempLog[3] == 4 or tempLog[3] == 5: # memory quota exceeded
+            memory_quota_exceeded_count +=1
+            if memory_quota_exceeded_count > 8: 
+                ratio = ratio + 1.0
+            elif  memory_quota_exceeded_count > 5:
+                ratio = ratio + 0.8
+            elif  memory_quota_exceeded_count > 3:
+                ratio = ratio + 0.5
+            elif  memory_quota_exceeded_count >= 1:
+                ratio = ratio + 0.2
+        else:
+            if tempLog[0] == 3:
+                error_count += 1
+                if error_count > 20:
+                    ratio = ratio + 0.7
+                elif error_count > 10:
+                    ratio = ratio + 0.4
+                elif  error_count > 5:
+                    ratio = ratio + 0.1
+        #print(ratio)
+        prediction_arr.append(ratio)
+print('len arr',len(prediction_arr))
+
 '''
+
+# 0 level_dict,  1 timestamp, 2 method_dict, 3 code_dict, 4 log_status, 5 log_service, 6 diff
+
 fark=0
 def cal_average(num):
     sum_num = 0
