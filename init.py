@@ -121,6 +121,7 @@ for i in range(len(logs_arr)):
             connection_closed_count = 0
             memory_quota_exceeded_count = 0
             error_count = 0
+            ratio = 0
         elif success_response_count > 10:
             ratio = 0.0
             if timeout_count > 2:
@@ -232,7 +233,7 @@ for i in range(len(logs_arr)):
                     if success_response_count > 0:
                         success_response_count -= 1
         prediction_arr.append(ratio)
-    #print(prediction_arr[i])
+        print(prediction_arr[i])
 print('prediction_arr length ',len(prediction_arr))
 
 '''
