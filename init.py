@@ -1,5 +1,6 @@
 import json
 import datetime
+import numpy as np
 
 level_dict = {
     "empty": 0,
@@ -101,9 +102,6 @@ with open('data.jsonl') as f:
 
 
 print(len(logs_arr))
-
-
-
 
 ratio = 0.0
 timeout_count = 0
@@ -234,7 +232,26 @@ for i in range(len(logs_arr)):
         prediction_arr.append(ratio)
     #print(prediction_arr[i])
 print('prediction_arr length ',len(prediction_arr))
+print(max(prediction_arr))
 
+def sigmoid(x):
+    output = 1/(1+np.exp(-x))
+    return output
+
+for i in range(0, len(logs_arr)):
+    if prediction_arr[i] == 0:
+        logs_arr[i].append(0.0)
+    else:
+        logs_arr[i].append(sigmoid(prediction_arr[i]))
+    logs_arr[i][1] = 0
+    '''if prediction_arr[i] > 1.0:
+        logs_arr[i].append(prediction_arr[i] / max(prediction_arr))
+    elif prediction_arr[i] == 1.0 or prediction_arr[i] == 1:
+        logs_arr[i].append(1.0)
+    else:
+        logs_arr[i].append(0.0)'''
+    print(logs_arr[i])
+    
 '''
 
 # 0 level_dict,  1 timestamp, 2 method_dict, 3 code_dict, 4 log_status, 5 log_service, 6 diff
