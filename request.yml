@@ -1,0 +1,28 @@
+config:
+  ensure:
+    maxErrorRate: 1
+  target: "https://whisper-go.herokuapp.com"
+  phases:
+    - duration: 400
+      arrivalRate: 10
+scenarios:
+  - name: "Search and buy"
+    flow:
+      - get:
+          url: "/"
+      
+      - get:
+          url: "/locations?region=izmit"
+      - get:
+          url: "/locations?region=izmit&lat=40.132&lon=32.232"
+  - name: "2"
+    flow:
+      - get:
+          url: "/users"
+      - get:
+          url: "/other-cpu"
+      - think: 30
+  - name: "3"
+    flow:
+      - get:
+          url: "/people?personid=1"

@@ -1,0 +1,13 @@
+config:
+    ensure:
+      maxErrorRate: 1
+    target: "https://whisper-go.herokuapp.com"
+    phases:
+      - duration: 400
+        arrivalRate: 1
+        maxVUsers: 1
+scenarios:
+  - name: "Search and buy"
+    flow:
+      - get:
+          url: "/other-cpu"
