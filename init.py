@@ -35,7 +35,6 @@ def calculate_logs(filename):
 
     rowcount = 0
     zamanlar = []
-    zamanfarklari = []
 
     # 0 level_dict,  1 timestamp, 2 method_dict, 3 code_dict, 4 log_status, 5 log_service, 6 diff
     with open(filename) as f:
@@ -245,42 +244,9 @@ def calculate_logs(filename):
         else:
             logs_arr[i].append(sigmoid(prediction_arr[i]))
         logs_arr[i][1] = 0
-        '''if prediction_arr[i] > 1.0:
-            logs_arr[i].append(prediction_arr[i] / max(prediction_arr))
-        elif prediction_arr[i] == 1.0 or prediction_arr[i] == 1:
-            logs_arr[i].append(1.0)
-        else:
-            logs_arr[i].append(0.0)'''
         print(logs_arr[i])
 
     return logs_arr
 
 
 
-
-    
-'''
-
-# 0 level_dict,  1 timestamp, 2 method_dict, 3 code_dict, 4 log_status, 5 log_service, 6 diff
-
-fark=0
-def cal_average(num):
-    sum_num = 0
-    for t in num:
-        sum_num = sum_num + t
-
-    avg = sum_num / len(num)
-    return avg
-
-for x in range(rowcount):
-    if x > 0:
-        if zamanlar[x-1] > zamanlar[x]:
-            fark=zamanlar[x-1] - zamanlar[x]
-        elif zamanlar[x] > zamanlar[x-1]:
-            fark = zamanlar[x] - zamanlar[x-1]
-        zamanfarklari.append(fark.microseconds)
-        print(fark.microseconds)
-
-print("En yuksek deger:",max(zamanfarklari))
-print("Ortalama degeri:",cal_average(zamanfarklari))
-'''
