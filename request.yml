@@ -6,11 +6,10 @@ config:
     - duration: 400
       arrivalRate: 10
 scenarios:
-  - name: "Search and buy"
+  - name: "1"
     flow:
       - get:
-          url: "/"
-      
+          url: "/"     
       - get:
           url: "/locations?region=izmit"
       - get:

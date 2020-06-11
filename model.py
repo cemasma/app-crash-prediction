@@ -27,9 +27,9 @@ for i in range(0, len(output)):
 
 model = Sequential()
 
-model.add(Dense(256, input_dim=7))
+model.add(Dense(16, input_dim=7))
 model.add(Activation("sigmoid"))
-model.add(Dense(256))
+model.add(Dense(8))
 model.add(Activation("sigmoid"))
 model.add(Dense(1))
 model.add(Activation("sigmoid"))

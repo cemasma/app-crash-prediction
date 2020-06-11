@@ -7,7 +7,7 @@ config:
         arrivalRate: 1
         maxVUsers: 1
 scenarios:
-  - name: "Search and buy"
+  - name: "Load test for thread"
     flow:
       - get:
           url: "/other-cpu"
