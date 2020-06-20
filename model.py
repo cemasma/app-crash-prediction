@@ -1,9 +1,11 @@
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, Activation
 import keras
 from keras.layers import Input, Dense
 from keras.optimizers import SGD
 import numpy as np
+import os
+
 from init import *
 
 
@@ -33,20 +35,14 @@ model.add(Dense(8))
 model.add(Activation("sigmoid"))
 model.add(Dense(1))
 model.add(Activation("sigmoid"))
-'''
-model.add(Dense(activation="sigmoid", input_dim=7, units=6, kernel_initializer="uniform"))
-model.add(Dropout(p= 0.1))
 
-model.add(Dense(activation="sigmoid", units=6, kernel_initializer="uniform"))
+if(os.path.exists("cp_model.h5")):
+    model = load_model("cp_model.h5")
+else:
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+    model.fit(input, output, epochs=200, batch_size=50)
 
-model.add(Dense(activation="sigmoid", units=1, kernel_initializer="uniform"))
-
-model.compile(optimizer='adam',loss='binary_crossentropy',metrics=['accuracy'])
-'''
-
-
-model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-model.fit(input, output, epochs=200, batch_size=50)
+    model.save("cp_model.h5")
 
 logs = [
     [1, 0, 1, 0, 200, 0, 71.49000000953674, 0.0],
